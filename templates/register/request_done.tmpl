@@ -1,0 +1,32 @@
+<html>
+<head>
+<title>BILS service account registry</title>
+</head>
+<body>
+
+
+{% if pw_change %}
+
+<div>
+Thanks, your password has been updated.
+</div>
+
+{% endif %}
+
+{% if services_change %}
+
+<div>
+Thanks, your service request has been submitted for review by BILS administrators. 
+</div>
+
+{% endif %}
+
+{% if not services_change and not pw_change %}
+<div>
+No change requested. 
+</div>
+{% endif %}
+
+If you want to, you can <a href="/register/request">go back and make more changes</a>.
+
+</body>
