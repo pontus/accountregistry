@@ -181,7 +181,7 @@ LOGGING = {
 }
 
 
-LOGIN_URL = '/saml2/login/'
+LOGIN_URL = '/register/login/'
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 from saml2 import BINDING_HTTP_REDIRECT

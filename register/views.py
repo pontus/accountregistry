@@ -14,6 +14,7 @@ from django import forms
 import register.account
 import logging
 
+import djangosaml2.views
 
 
 logger = logging.getLogger(__name__)
@@ -31,10 +32,9 @@ def logout_view(request):
     logout(request)
     return render_to_response('register/loggedout.tmpl', {'a':10})
 
-
-
-
-
+def login_view(request):
+    return djangosaml2.views.login(request, wayf_template='register/wayf.tmpl')
+    
 
 
 
