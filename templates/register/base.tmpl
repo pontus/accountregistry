@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>{% block title %} BILS service account registry {% endblock %}</title>
+  <link href="https://www.bils.se/assets/css/bootstrap.css" rel="stylesheet">
+    <!-- bootstrap tweaks/customizations -->
+    <link href="https://www.bils.se/assets/css/bils.css" rel="stylesheet">
+    <link href="https://www.bils.se/assets/css/buttons.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="navbar-header">
+           <a class="brand" href="https://www.bils.se/"><img alt="BILS" src="https://www.bils.se/assets/img/bilslogo-small.jpg" width="64" style="padding-top:10px;padding-bottom:0px;"/></a>
+  </div>
+  <div class="navbar-collapse collapse">
+  </div>
+<div class="container">
+{%block content %}
+<div>
+This is the BILS service account registry where you can apply for access to various services provided by BILS.
+</div>
+<div>
+If your organization is a member of <a href="http://www.swamid.se/">SWAMID</a> (most Swedish academic institutions are), you can log in and apply for/manage your account directly with the <a href="/register/request">register application</a>.
+</div>
+<div>
+If your institution is not connected to SWAMID, you may still apply for access to BILS-provided services, please send a mail to support@bils.se for more information.
+{% endblock %}
+</div>
+</body>
