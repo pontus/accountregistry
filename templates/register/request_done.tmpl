@@ -1,32 +1,42 @@
-<html>
-<head>
-<title>BILS service account registry</title>
-</head>
-<body>
+{% extends "register/base.tmpl" %}
+
+{% block content %}
+
+<div style="text-align: center; padding-top: 50px; font-size: 1.5em; ">
+
+<div>
+  Request submitted!
+</div>
+
+
 
 
 {% if pw_change %}
 
-<div>
-Thanks, your password has been updated.
+<div class="xtrapadding">
+Your password has been updated.
 </div>
 
 {% endif %}
 
 {% if services_change %}
 
-<div>
-Thanks, your service request has been submitted for review by BILS administrators. 
+<div class="xtrapadding">
+Your service request has been submitted for review by BILS administrators. 
 </div>
 
 {% endif %}
 
 {% if not services_change and not pw_change %}
-<div>
+<div class="xtrapadding">
 No change requested. 
 </div>
 {% endif %}
 
-If you want to, you can <a href="/register/request">go back and make more changes</a>.
+<div class="xtrapadding">
+If you want to, you can <a href="{% url requestpage %}">go back and make more changes</a>.
+</div>
 
-</body>
+</div>
+{% endblock %}
+
