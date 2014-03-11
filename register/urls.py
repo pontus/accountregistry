@@ -4,10 +4,11 @@ from django.contrib import admin
 
 urlpatterns = patterns('',
 
-    url(r'^$', 'register.views.index'),
-   url(r'^request$', 'register.views.request'),
-   url(r'^request/done$', 'register.views.request_sent'),
-   url(r'^logout$', 'register.views.logout_view'),
-   url(r'^login/.*$', 'register.views.login_view'),
+                       url(r'^$', 'register.views.index'),
+                       url(r'^request$', 'register.views.request'),
+                       url(r'^request/done$', 'register.views.request_sent'),
+                       url(r'^logout$', 'register.views.logout_view'),
+                       url(r'^login/.*$', 'register.views.login_view', name="login-parameter"),
+                       url(r'^login$', 'register.views.login_view', name="login-none"),
 
 )
