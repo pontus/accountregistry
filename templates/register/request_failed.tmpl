@@ -1,0 +1,32 @@
+{% extends "register/base.tmpl" %}
+
+{% block content %}
+<div style="text-align: center; padding-top: 50px; font-size: 1.5em; ">
+<div>
+Request failed!
+</div>
+
+{% if pw_change %}
+<div class="xtrapadding">
+Something went wrong and we couldn't update your password. In case you used any exotic characters, please try without doing so.
+</div>
+{% endif %}
+
+{% if services_change %}
+<div class="xtrapadding">
+Couldn't create/update your set of registered services.
+</div>
+{% endif %}
+
+
+<div class="xtrapadding">
+
+
+You can <a href="{% url requestpage %}">go back</a> or try 
+contact <a href="mailto:webmaster@bils.se">webmaster@bils.se</a> for additional support.
+
+
+
+</div>
+</div>
+{% endblock %}
