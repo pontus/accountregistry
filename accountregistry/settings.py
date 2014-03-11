@@ -188,7 +188,7 @@ from saml2 import BINDING_HTTP_REDIRECT
 
 SAML_ATTRIBUTE_MAPPING = {
     'eduPersonPrincipalName': ('username', ),
-    'mail': ('mail', ),
+    'mail': ('email', ),
     'givenName': ('first_name', ),
     'sn': ('last_name', ),
 }
