@@ -32,6 +32,9 @@ def logout_view(request):
     logout(request)
     return render_to_response('register/loggedout.tmpl', {'a':10})
 
+
+
+
 def login_view(request):
     return djangosaml2.views.login(request, wayf_template='register/wayf.tmpl')
     
@@ -48,13 +51,7 @@ def login_view(request):
 
 
 
-
-
-
 class servicesForm(forms.Form):
-
-
-    #hej = forms.BooleanField(required=False, label='Test.')
 
     def __init__(self, *args, **kwargs):
 
@@ -65,13 +62,6 @@ class servicesForm(forms.Form):
 
             if p.tag not in self.fields.keys():
                 self.fields[p.tag] =  forms.BooleanField(required=False, label=p.description)
-
-
-            #openstack = forms.BooleanField(required=False, label='The OpenStack cloud service')
-            #fido = forms.BooleanField(required=False, label='The FIDO service provision system')
-
-        #logger.debug(repr(dir(self)))
-        #logger.debug(repr(self.fields))
 
 class passwordForm(forms.Form):
     password = forms.CharField(label='New password')
@@ -84,14 +74,19 @@ def request(request):
     pwdForm = passwordForm()
 
     c = {'email': request.user.email,
-         'name': '%s %s' % (request.user.first_name, request.user.last_name) + " "+ repr(servicesForm),
+         'name': '%s %s' % (request.user.first_name, request.user.last_name),
          'servicesForm': sForm,
          'passwordForm': pwdForm,
          'current_request': False}
 
     c.update(csrf(request))
 
+    # Offer password change?
     has_account = request.session.get('has_account')
+    c.update({'has_account':True})
+
+    logger.debug(request.user.email+ ' has_account '+repr(has_account))
+
     if not has_account:
         has_account = register.account.exists(request.user.email)
         if has_account:
