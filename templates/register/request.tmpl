@@ -1,49 +1,50 @@
-<html>
-<head>
-<title>BILS service account registry</title>
-</head>
-<body>
+{% extends "register/base.tmpl" %}
+
+{% block content %}
+<div style="text-align: center; padding-top: 50px; font-size: 1.5em; ">
+  <div>
+    You're currently logged in as {{name}} (email: {{email}})
+  </div>
+  <div style="font-size: 1em">
+
+    <div class="xtrapadding">
+      <!-- account password change? -->
+      {% if has_account %}
+      <div class="xtrapadding">
+      You seem to have a BILS service account already, you may change the password here:
+      </div>
+      <form action="/register/request/done" method="post">
+	{% csrf_token %}
+	{{ passwordForm.as_p }}
+	<input type="submit" value="Change! " />
+      </form>
+      {% endif %}
+    </div>
+
+    <div class="xtrapadding">
+      {% if current_request %}
+      You have an outstanding service request, but you may update it below.
+      {% endif %}
+    </div>
+    <div class="xtrapadding">
+      Please choose the services you want to request access to:
+
+      <div class="xtrapadding" style="display: block; margin-left: auto; margin-right: auto">
+
+	<form action="/register/request/done" method="post">
+	  {% csrf_token %}
+
+	  <div style="text-align: left">
+	  {{ servicesForm.as_p }}
+	  </div>
+
+	  <input type="submit" value="Apply for services" style="display: block; margin-left: auto; margin-right: auto"/>
+	</form>
+      </div>
 
 
-<div>
-You're currently logged in as {{name}}, {{email}}
-
-<br/>
+    </div>
+  </div>
 
 </div>
-{% if has_account %}
-
-<div>
-<form action="/register/request/done" method="post">
-{% csrf_token %}
-
-{{ passwordForm.as_p }}
-
-<input type="submit" value="Change! " />
-</form>
-</div>
-
-{% endif %}
-
-{% if current_request %}
-<div>
-You have an outstanding service request, but you may update it below.
-</div>
-{% endif %}
-
-Please choose the services you want to use:
-
-<div>
-<form action="/register/request/done" method="post">
-{% csrf_token %}
-
-{{ servicesForm.as_p }}
-
-
-<input type="submit" value="Apply for services" />
-</form>
-</div>
-
-
-
-</body>
+{% endblock %}

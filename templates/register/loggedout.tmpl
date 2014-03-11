@@ -1,9 +1,18 @@
-<html>
-<head>
-<title>BILS service account registry</title>
-</head>
-<body>
+{% extends "register/base.tmpl" %}
 
-Utloggad
+{% block content %}
+<div style="text-align: center; padding-top: 50px; font-size: 1.5em; ">
+  <div>
+    Logged out
+  </div>
 
-</body>
+
+</div>
+
+
+
+<div class="xtrapadding">
+    You have now been logged out from the BILS Account registry service. <br/>
+  If you want to, you can go back to the <a href="/register/request">request</a> page, possibly using a different identity provider.
+</div>
+{% endblock %}

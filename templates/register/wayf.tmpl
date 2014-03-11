@@ -1,0 +1,23 @@
+{% extends "register/base.tmpl" %}
+
+{% block content %}
+<div style="text-align: center; padding-top: 50px; font-size: 1.5em; ">
+  <div>
+    Where are you from?
+  </div>
+  <div class="xtrapadding">
+    Please select your home institution (<strong>Identity Provider</strong>) in the list below.
+  </div>
+</div>
+
+
+
+<div class="xtrapadding">
+  <ul>
+    {% for url, name in available_idps %}
+    <!-- {% url login-none %} -->
+    <li><a href="{% url login-none %}/?idp={{ url }}{% if came_from %}&next={{ came_from }}{% endif %}">{{ name.0 }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
