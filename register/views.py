@@ -109,45 +109,50 @@ def request_sent(request):
     
     c = {}
 
-    if request.method == 'POST':
-        f1 = servicesForm(request.POST)
-        f2 = passwordForm(request.POST)
+    try:
+        if request.method == 'POST':
+            f1 = servicesForm(request.POST)
+            f2 = passwordForm(request.POST)
 
-        if f1.is_valid():
+            if f1.is_valid():
 
-            logger.debug("f1 "+repr(f1.fields.keys()))
+                logger.debug("f1 "+repr(f1.fields.keys()))
 
-            c['services_change'] = False
+                c['services_change'] = False
 
-            g = f1.cleaned_data
+                g = f1.cleaned_data
 
-            srv = ' '.join( filter(lambda(x) : g[x], g.keys()))
-            user_requests = register.models.request.objects.filter(email=request.user.email)
+                srv = ' '.join( filter(lambda(x) : g[x], g.keys()))
+                user_requests = register.models.request.objects.filter(email=request.user.email)
 
-            if not user_requests:
-                r = register.models.request.objects.create()
-            else:
-                r = user_requests[0]
+                if not user_requests:
+                    r = register.models.request.objects.create()
+                else:
+                    r = user_requests[0]
 
-            r.email = request.user.email
-            r.name = '%s %s' % (request.user.first_name, request.user.last_name)
+                r.email = request.user.email
+                r.name = '%s %s' % (request.user.first_name, request.user.last_name)
 
-            if r.services != srv:
-                r.services = srv
-                c['services_change'] = True
+                if r.services != srv:
+                    r.services = srv
+                    c['services_change'] = True
 
-            r.message = ''
-            r.save()
+                r.message = ''
+                r.save()
 
-        if f2.is_valid():
+            if f2.is_valid():
             
-            c['pw_change'] = True
-            
-            newpwd = f2.cleaned_data['password']          
-            
-            if register.account.exists(request.user.email):
-                register.account.changepwd(request.user.email, newpwd)
+                c['pw_change'] = True
 
+                logger.debug("f2 "+repr(f2.fields.keys()))
+            
+                newpwd = str(f2.cleaned_data['password'])
+                logger.debug('pwd: '+newpwd)
+
+                if register.account.exists(request.user.email):
+                    register.account.changepwd(request.user.email, newpwd)
+    except:
+        return render_to_response('register/request_failed.tmpl', c)
                                                
         
     return render_to_response('register/request_done.tmpl', c)
