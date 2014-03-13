@@ -2,6 +2,7 @@ import ldap
 import base64
 import hashlib
 import smtplib
+import random
 
 ldapConnection = None
 
@@ -39,6 +40,28 @@ def changepwd(uid, newpwd):
     # LDAP is set up to automatically fix MD5 encoding
     l.modify_s(dn, ((ldap.MOD_REPLACE, "userPassword", newpwd),))
 
+def create(uid,cn,sn):
+  l = ldapsetup()
+
+  if exists(uid):
+    return
+
+  uidNumber = random.randint(2000000,5000000)
+
+  while l.search_ext_s(ldapbase, filterstr='(uidNumber=%s)' % uidNumber, scope=ldap.SCOPE_SUBTREE):
+      uidNumber = random.randint(2000000,5000000)
+
+  l.add_s('uid=%s,ou=Clients,ou=Users,dc=bils,dc=se' % uid,
+             [('homeDirectory', ['/home/%s' % uid]),
+              ('sn', [sn]),
+              ('cn', [cn]),
+              ('uid',[uid]),
+              ('mail',[uid]),
+              ('loginShell', ['/bin/bash']),
+              ('objectClass', ['posixAccount', 'shadowAccount', 'inetOrgPerson', 'person', 'top', 'organizationalPerson']),
+              ('uidNumber', [str(uidNumber)]),
+              ('gidNumber', [str(uidNumber)]),
+              ])
 
 
 f=open('/etc/bilsldap')
