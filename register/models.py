@@ -29,3 +29,6 @@ class request(models.Model):
 class mail(models.Model):
       tag = models.CharField(max_length=8)
       rfc822 = models.CharField(max_length=32768)
+
+class admins(models.Model):
+      email = models.CharField(max_length=512)
