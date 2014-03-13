@@ -146,6 +146,7 @@ def request_sent(request):
 
 
 
+            # Password change?
             if f2.is_valid():
             
                 c['pw_change'] = True     
@@ -260,6 +261,11 @@ def admin_sent(request):
                         # Fix name
                         cn = register.models.request.objects.get(email=p).name.split(' ')[0]
                         sn = ' '.join(register.models.request.objects.get(email=p).name.split(' ')[1:])
+
+                        if not cn:
+                            cn = 'NAMELESS'
+                        if not sn:
+                            sn = 'NAMELESS'
 
                         register.account.create(p, cn, sn)
 
