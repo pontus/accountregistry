@@ -1,0 +1,40 @@
+{% extends "register/base.tmpl" %}
+
+{% block content %}
+<div style="text-align: center; padding-top: 50px; font-size: 1.5em; ">
+
+ 
+  Administration
+</div>
+
+
+
+
+<div class="xtrapadding">
+The following requests need to be acted on:
+</div>
+
+
+<div class="xtrapadding">
+
+  <form action="/register/admin/done" method="post">
+	{% csrf_token %}
+
+	{{ requests.as_p }}
+
+
+
+
+
+	<input type="submit" value="Grant/Reject! " />
+  </form>
+
+</div>
+
+
+
+<div class="xtrapadding">
+<a href="/register/request">Go back</a>.
+</a>
+{% endblock %}
+
