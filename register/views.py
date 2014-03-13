@@ -26,11 +26,11 @@ def index(request):
     #c = Context({
     #    'a': 10
     #})
-    return render_to_response('register/main.tmpl', {'a':10})
+    return render_to_response('register/main.tmpl', {})
 
 def logout_view(request):
     logout(request)
-    return render_to_response('register/loggedout.tmpl', {'a':10})
+    return render_to_response('register/loggedout.tmpl', {})
 
 
 
@@ -104,7 +104,7 @@ def request(request):
     return render_to_response('register/request.tmpl', c)
 
 
-
+@login_required
 def request_sent(request):
     
     c = {}
@@ -142,9 +142,7 @@ def request_sent(request):
 
             if f2.is_valid():
             
-                c['pw_change'] = True
-
-                logger.debug("f2 "+repr(f2.fields.keys()))
+                c['pw_change'] = True     
             
                 newpwd = str(f2.cleaned_data['password'])
                 logger.debug('pwd: '+newpwd)
@@ -156,3 +154,66 @@ def request_sent(request):
                                                
         
     return render_to_response('register/request_done.tmpl', c)
+
+
+class requestsForm(forms.Form):
+
+    def __init__(self, *args, **kwargs):
+
+        
+        # Show form for all our services
+        forms.Form.__init__(self, *args, **kwargs)
+        for p in register.models.request.objects.all():
+
+            self.fields[p.email] = forms.MultipleChoiceField(widget = forms.CheckboxSelectMultiple,
+                                                             choices=( 
+                ('reject', 'Reject'), ('grant', 'Grant')), 
+                                                             label="%s (%s) requested %s with extra message: %s" % 
+                                                             (p.email, p.name, p.services, p.message),
+                                                             required=False)
+
+
+
+@login_required
+def admin_view(request):
+    
+    adminuser = False
+    admins =  register.models.admins.objects.all()
+
+    currentuser = request.user.email.lower()
+
+    for p in admins:
+        if p.email.lower() == currentuser:
+            adminuser = True
+
+    if not adminuser:
+        c['admin_failed'] = True
+        return render_to_response('register/request_failed.tmpl', c)
+
+    c = {}
+    c.update(csrf(request))
+
+    c['requests'] = requestsForm() # register.models.request.objects.all()
+
+    return render_to_response('register/admin.tmpl', c)
+        
+
+@login_required
+def admin_sent(request):
+
+    c = {}
+
+    try:
+        f = requestsForm(request.POST)
+
+        if f.is_valid():
+            for p in f.fields.keys():
+                logger.debug(p+ ' response  '+repr(f.cleaned_data[p]))
+
+        #account.create(request.user.email, reque_name, request.user.last_name)
+
+    except:
+        return render_to_response('register/request_failed.tmpl', c)
+
+
+    return render_to_response('register/admin_sent.tmpl', c)
