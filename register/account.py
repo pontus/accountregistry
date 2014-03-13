@@ -63,6 +63,12 @@ def create(uid,cn,sn):
               ('gidNumber', [str(uidNumber)]),
               ])
 
+def grantservice(uid, servicedn):
+  
+  l = ldapsetup()
+  l.modify_s(servicedn, ((ldap.MOD_ADD, "memberUid", str(uid)),))
+  
+
 
 f=open('/etc/bilsldap')
 

@@ -12,6 +12,8 @@ from django.contrib.auth import logout
 from django import forms
 
 import register.account
+import register.mailing
+
 import logging
 
 import djangosaml2.views
@@ -85,8 +87,6 @@ def request(request):
     has_account = request.session.get('has_account')
     c.update({'has_account':True})
 
-    logger.debug(request.user.email+ ' has_account '+repr(has_account))
-
     if not has_account:
         has_account = register.account.exists(request.user.email)
         if has_account:
@@ -97,10 +97,6 @@ def request(request):
     if register.models.request.objects.filter(email=request.user.email):
         c['current_request'] = True
 
-    #t = loader.get_template('register/main.tmpl')
-    #c = Context({
-    #    'a': 10
-    #})
     return render_to_response('register/request.tmpl', c)
 
 
@@ -109,14 +105,13 @@ def request_sent(request):
     
     c = {}
 
+    
     try:
         if request.method == 'POST':
             f1 = servicesForm(request.POST)
             f2 = passwordForm(request.POST)
 
-            if f1.is_valid():
-
-                logger.debug("f1 "+repr(f1.fields.keys()))
+            if f1.is_valid():     
 
                 c['services_change'] = False
 
@@ -140,15 +135,31 @@ def request_sent(request):
                 r.message = ''
                 r.save()
 
+
+                msg = register.models.mail.objects.get(tag='newrequest').rfc822
+                msg = msg.replace('%%EMAIL%%', request.user.email)
+
+                for p in register.models.admins.objects.all():
+
+                    msg = msg.replace('%%RCPT%%', p.email)
+                    register.mailing.send(p.email, msg)
+
+
+
             if f2.is_valid():
             
                 c['pw_change'] = True     
             
                 newpwd = str(f2.cleaned_data['password'])
-                logger.debug('pwd: '+newpwd)
 
                 if register.account.exists(request.user.email):
                     register.account.changepwd(request.user.email, newpwd)
+
+                msg = register.models.mail.objects.get(tag='pwdchange').rfc822
+                msg = msg.replace('%%EMAIL%%', request.user.email)
+
+                register.mailing.send(request.user.email, msg)
+
     except:
         return render_to_response('register/request_failed.tmpl', c)
                                                
@@ -215,20 +226,57 @@ def admin_sent(request):
 
                 if not f.cleaned_data[p]:                   
                     reqs_handled[p] = "ignored"
+
                 elif len(f.cleaned_data[p]) > 1:
+
                     reqs_handled[p] = "too many choices made, ignored"
+
                 elif f.cleaned_data[p] == [u'reject']:
+                    for service in register.models.request.objects.get(email=p).services.split():
+
+                        servicedescription = register.models.service.objects.get(tag=service).description
+
+                        msg = register.models.mail.objects.get(tag='rejected').rfc822
+                        msg = msg.replace('%%EMAIL%%', p)
+                        msg = msg.replace('%%SERVICE%%', servicedescription)
+                        register.mailing.send(p, msg)
+
                     reqs_handled[p] = "rejected, user mail sent"
 
+
                 elif f.cleaned_data[p] == [u'grant']:
+
+                    # Allow
+
                     if register.account.exists(p):
                         reqs_handled[p] = "accepted, user mail sent, user had an account already"
                     else:
+
+                        # No account - create 
+                        register.account.create(p)
+
+                        msg = register.models.mail.objects.get(tag='accountcreated').rfc822
+                        msg = msg.replace('%%EMAIL%%', request.user.email)
+                        register.mailing.send(p, msg)
+
                         reqs_handled[p] = "accepted, user mail sent, new account created"
+
+                        
+                    for service in register.models.request.objects.get(email=p).services.split():
+
+                        gdn = register.models.service.objects.get(tag=service).groupdn
+                        servicedescription = register.models.service.objects.get(tag=service).description
+
+                        register.account.grantservice(p, gdn)
+
+                        msg = register.models.mail.objects.get(tag='granted').rfc822
+                        msg = msg.replace('%%EMAIL%%', p)
+                        msg = msg.replace('%%SERVICE%%', servicedescription)
+                        register.mailing.send(p, msg)
+
 
                 
 
-        #account.create(request.user.email, reque_name, request.user.last_name)
 
     #except:
     #    return render_to_response('register/request_failed.tmpl', c)
