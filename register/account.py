@@ -52,11 +52,11 @@ def create(uid,cn,sn):
       uidNumber = random.randint(2000000,5000000)
 
   l.add_s('uid=%s,ou=Clients,ou=Users,dc=bils,dc=se' % uid,
-             [('homeDirectory', ['/home/%s' % uid]),
-              ('sn', [sn]),
-              ('cn', [cn]),
-              ('uid',[uid]),
-              ('mail',[uid]),
+             [('homeDirectory', ['/home/%s' % str(uid)]),
+              ('sn', [str(sn)]),
+              ('cn', [str(cn)]),
+              ('uid',[str(uid)]),
+              ('mail',[str(uid)]),
               ('loginShell', ['/bin/bash']),
               ('objectClass', ['posixAccount', 'shadowAccount', 'inetOrgPerson', 'person', 'top', 'organizationalPerson']),
               ('uidNumber', [str(uidNumber)]),
@@ -66,8 +66,10 @@ def create(uid,cn,sn):
 def grantservice(uid, servicedn):
   
   l = ldapsetup()
-  l.modify_s(servicedn, ((ldap.MOD_ADD, "memberUid", str(uid)),))
-  
+  try:
+    l.modify_s(servicedn, ((ldap.MOD_ADD, "memberUid", str(uid)),))
+  except ldap.TYPE_OR_VALUE_EXISTS, e:
+    pass
 
 
 f=open('/etc/bilsldap')
