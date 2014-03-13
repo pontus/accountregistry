@@ -10,5 +10,6 @@ urlpatterns = patterns('',
                        url(r'^logout$', 'register.views.logout_view'),
                        url(r'^login/.*$', 'register.views.login_view', name="login-parameter"),
                        url(r'^login$', 'register.views.login_view', name="login-none"),
-
+                       url(r'^admin$', 'register.views.admin_view', name="admin"),
+                       url(r'^admin/done$', 'register.views.admin_sent'),
 )
