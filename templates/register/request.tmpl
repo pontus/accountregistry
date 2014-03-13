@@ -3,9 +3,17 @@
 {% block content %}
 <div style="text-align: center; padding-top: 50px; font-size: 1.5em; ">
   <div>
-    You're currently logged in as {{name}} (email: {{email}})
+    You're currently logged in as {{name}} (email: {{email}}). 
   </div>
+
+   <div>
+     If this isn't the identity you want to use, you can <a href="{% url logout %}">logout</a> and log back in with another right identity provider.
+  </div>
+
+  
   <div style="font-size: 1em">
+
+
 
     <div class="xtrapadding">
       <!-- account password change? -->
