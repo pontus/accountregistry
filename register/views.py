@@ -187,7 +187,7 @@ class requestsForm(forms.Form):
 
 @login_required
 def admin_view(request):
-    
+
     adminuser = False
     admins =  register.models.admins.objects.all()
 
@@ -198,8 +198,7 @@ def admin_view(request):
             adminuser = True
 
     if not adminuser:
-        c['admin_failed'] = True
-        return render_to_response('register/request_failed.tmpl', c)
+        return render_to_response('register/request_failed.tmpl', {'admin_failed': True})
 
     c = {}
     c.update(csrf(request))
@@ -241,6 +240,10 @@ def admin_sent(request):
                         msg = msg.replace('%%SERVICE%%', servicedescription)
                         register.mailing.send(p, msg)
 
+
+
+                    register.models.request.objects.get(email=p).delete()
+                    
                     reqs_handled[p] = "rejected, user mail sent"
 
 
@@ -253,10 +256,15 @@ def admin_sent(request):
                     else:
 
                         # No account - create 
-                        register.account.create(p)
+
+                        # Fix name
+                        cn = register.models.request.objects.get(email=p).name.split(' ')[0]
+                        sn = ' '.join(register.models.request.objects.get(email=p).name.split(' ')[1:])
+
+                        register.account.create(p, cn, sn)
 
                         msg = register.models.mail.objects.get(tag='accountcreated').rfc822
-                        msg = msg.replace('%%EMAIL%%', request.user.email)
+                        msg = msg.replace('%%EMAIL%%', p)
                         register.mailing.send(p, msg)
 
                         reqs_handled[p] = "accepted, user mail sent, new account created"
@@ -274,8 +282,9 @@ def admin_sent(request):
                         msg = msg.replace('%%SERVICE%%', servicedescription)
                         register.mailing.send(p, msg)
 
+                    # All done, remove request
+                    register.models.request.objects.get(email=p).delete()
 
-                
 
 
     #except:
