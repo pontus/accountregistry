@@ -201,19 +201,37 @@ def admin_view(request):
 @login_required
 def admin_sent(request):
 
-    c = {}
+    
+    reqs_handled = {}
+    c = { 'reqs': reqs_handled }
 
-    try:
+    #try:
+    if 1:
         f = requestsForm(request.POST)
 
         if f.is_valid():
             for p in f.fields.keys():
                 logger.debug(p+ ' response  '+repr(f.cleaned_data[p]))
 
+                if not f.cleaned_data[p]:                   
+                    reqs_handled[p] = "ignored"
+                elif len(f.cleaned_data[p]) > 1:
+                    reqs_handled[p] = "too many choices made, ignored"
+                elif f.cleaned_data[p] == [u'reject']:
+                    reqs_handled[p] = "rejected, user mail sent"
+
+                elif f.cleaned_data[p] == [u'grant']:
+                    if register.account.exists(p):
+                        reqs_handled[p] = "accepted, user mail sent, user had an account already"
+                    else:
+                        reqs_handled[p] = "accepted, user mail sent, new account created"
+
+                
+
         #account.create(request.user.email, reque_name, request.user.last_name)
 
-    except:
-        return render_to_response('register/request_failed.tmpl', c)
+    #except:
+    #    return render_to_response('register/request_failed.tmpl', c)
 
 
     return render_to_response('register/admin_sent.tmpl', c)
