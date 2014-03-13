@@ -9,10 +9,21 @@
 </div>
 
 
+<div class="xtrapadding">
+
+     <ul>
+    {% for email, action in reqs.items %}
+    
+    <li>
+    {{ email }} {{ action }}
+    </li>
+    {% endfor %}
+    </ul>
+</div>
 
 
 <div class="xtrapadding">
-<a href="{% url requestpage %}">Go back</a>.
+<a href="{% url admin %}">Go back</a>.
 </div>
 
 </div>
