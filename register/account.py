@@ -3,6 +3,7 @@ import base64
 import hashlib
 import smtplib
 import random
+import codecs
 
 ldapConnection = None
 
@@ -53,8 +54,8 @@ def create(uid,cn,sn):
 
   l.add_s('uid=%s,ou=Clients,ou=Users,dc=bils,dc=se' % uid,
              [('homeDirectory', ['/home/%s' % str(uid)]),
-              ('sn', [str(sn)]),
-              ('cn', [str(cn)]),
+              ('sn', [codecs.utf_8_encode(sn)[0]]),
+              ('cn', [codecs.utf_8_encode(cn)[0]]),
               ('uid',[str(uid)]),
               ('mail',[str(uid)]),
               ('loginShell', ['/bin/bash']),
