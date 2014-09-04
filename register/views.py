@@ -132,22 +132,24 @@ def request_sent(request):
                     r.services = srv
                     c['services_change'] = True
 
-                r.message = ''
-                r.save()
+
+                if c['services_change']:
+                    r.message = ''
+                    r.save()
 
 
-                msg = register.models.mail.objects.get(tag='newrequest').rfc822
-                msg = msg.replace('%%EMAIL%%', request.user.email)
+                    msg = register.models.mail.objects.get(tag='newrequest').rfc822
+                    msg = msg.replace('%%EMAIL%%', request.user.email)
 
-                for p in register.models.admins.objects.all():
+                    for p in register.models.admins.objects.all():
 
-                    msg = msg.replace('%%RCPT%%', p.email)
-                    register.mailing.send(p.email, msg)
+                        msg = msg.replace('%%RCPT%%', p.email)
+                        register.mailing.send(p.email, msg)
 
 
 
             # Password change?
-            if f2.is_valid():
+            if f2.is_valid() and str(f2.cleaned_data['password']):
             
                 c['pw_change'] = True     
             
