@@ -72,6 +72,16 @@ def grantservice(uid, servicedn):
   except ldap.TYPE_OR_VALUE_EXISTS, e:
     pass
 
+def hasservice(uid, servicedn):
+  
+  l = ldapsetup()
+
+  posts = l.search_ext_s(servicedn, filterstr='(memberUid=%s)' % str(uid), scope=ldap.SCOPE_BASE)
+
+  if posts:
+     return True
+  return False
+
 
 f=open('/etc/bilsldap')
 
