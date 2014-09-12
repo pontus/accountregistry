@@ -34,7 +34,11 @@
       You have an outstanding service request, but you may update it below.
       {% endif %}
     </div>
+
     <div class="xtrapadding">
+     {% if unused_services %}
+
+
       Please choose the services you want to request access to:
 
       <div class="xtrapadding" style="display: block; margin-left: auto; margin-right: auto">
@@ -48,8 +52,12 @@
 
 	  <input type="submit" value="Apply for services" style="display: block; margin-left: auto; margin-right: auto"/>
 	</form>
-      </div>
 
+
+      </div>
+    {% else %}
+       You have been granted  access to all services currently offered by BILS.
+    {% endif %}
 
     </div>
   </div>

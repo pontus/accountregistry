@@ -57,11 +57,12 @@ class servicesForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
 
-        
+        uid = args[0]
+ 
         # Show form for all our services
         forms.Form.__init__(self, *args, **kwargs)
         for p in register.models.service.objects.all():
-
+          if not register.account.hasservice(uid, p.groupdn):
             if p.tag not in self.fields.keys():
                 self.fields[p.tag] =  forms.BooleanField(required=False, label=p.description)
 
@@ -72,13 +73,14 @@ class passwordForm(forms.Form):
 @login_required
 def request(request):
 
-    sForm = servicesForm()
+    sForm = servicesForm(request.user.email)
     pwdForm = passwordForm()
 
     c = {'email': request.user.email,
          'name': '%s %s' % (request.user.first_name, request.user.last_name),
          'servicesForm': sForm,
          'passwordForm': pwdForm,
+         'unused_services': len(sForm.fields),
          'current_request': False}
 
     c.update(csrf(request))
