@@ -15,7 +15,8 @@ class service(models.Model):
       tag = models.CharField(max_length=256)
       description = models.CharField(max_length=256)
       groupdn = models.CharField(max_length=2048)
-
+      needstfa = models.BooleanField(default=False)
+      autogrant = models.BooleanField(default=False)
 
 class request(models.Model):
       email = models.CharField(max_length=2048)
